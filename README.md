@@ -6,6 +6,6 @@ the password for the domain of the URL. We use [tldextract](https://github.com/j
 to find the domain.
 4. On Linux (tested) and Mac OS X (untested) a notification will appear about the successful copying.
 
-Optionally, install the [https://chrome.google.com/webstore/detail/copy-url/mkhnbhdofgaendegcgbmndipmijhbili?hl=en](copy url) extension into Chrome.
+Optionally, install the [copy url](https://chrome.google.com/webstore/detail/copy-url/mkhnbhdofgaendegcgbmndipmijhbili?hl=en) extension into Chrome.
 
 pip can install both pyperclip and tldextract. No other dependencies.
