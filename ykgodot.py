@@ -1,39 +1,41 @@
 #!/bin/python
 
-from time import time,sleep
-from subprocess import call,DEVNULL
+import time
+from subprocess import check_call,DEVNULL
 from urllib.parse import urlparse
-from pyperclip import paste
+import pyperclip
+# Remember to run tldextract --update as root.
 import tldextract
+from retrying import retry
+
 try:
   from pync import Notifier
-except:
-  from gi.repository import Notify
-
-def mynotify(text):
-  app='YK Godot'
+  def notify(text):
+    Notifier.notify(text, title='YK Godot')
+except ImportError:
   try:
-    Notifier.notify(text, title=app)
-  except:
-    Notify.init(app)
-    notification = Notify.Notification.new(app, text, 'dialog-information')
-    notification.show()
+    from gi.repository import Notify
+    def notify(text):
+      app='YK Godot'
+      Notify.init(app)
+      notification = Notify.Notification.new(app, text, 'dialog-information')
+      notification.show()
+  except ImportError:
+    def notify(text):
+      pass
 
-old_value = paste()
+@retry(stop_max_delay=10000,wait_fixed=20)
+def generate_password(domain):
+  check_call(["gpg", "--card-status"], stdout=DEVNULL, stderr=DEVNULL)
+  check_call(["pass", "-c", domain], stdout=DEVNULL, stderr=DEVNULL)
+
+old_value = pyperclip.paste()
 while True:
-  current_value = paste()
+  current_value = pyperclip.paste()
   if current_value != old_value:
     old_value = current_value
-    try:
-      domain = tldextract.extract(urlparse(current_value).netloc).domain
-      # Wait a few seconds for the Yubikey
-      timeout = time() + 10
-      while time() < timeout:
-        if 0 == call(["gpg", "--card-status"], stdout=DEVNULL, stderr=DEVNULL):
-          if 0 == call(["pass", "-c", domain], stdout=DEVNULL, stderr=DEVNULL):
-            mynotify('Password copied')
-          break
-        sleep(0.02)
-    except:
-      pass
-    sleep(0.2)
+    domain = tldextract.extract(urlparse(current_value).netloc).domain
+    if domain:
+      generate_password(domain)
+      notify('Password copied')
+  time.sleep(0.2)
