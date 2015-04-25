@@ -25,15 +25,8 @@ except ImportError:
       pass
 
 @retry(stop_max_delay=10000,wait_fixed=20)
-def _wait_for_card():
-  check_call(["gpg", "--card-status"], stdout=DEVNULL, stderr=DEVNULL)
-
 def wait_for_card():
-  try:
-    _wait_for_card()
-    return True
-  except:
-    return False
+  check_call(["gpg", "--card-status"], stdout=DEVNULL, stderr=DEVNULL)
 
 def generate_password(domain):
   check_call(["pass", "-c", domain], stdout=DEVNULL, stderr=DEVNULL)
@@ -44,7 +37,11 @@ while True:
   if current_value != old_value:
     old_value = current_value
     domain = tldextract.extract(urlparse(current_value).netloc).domain
-    if domain and wait_for_card():
-      generate_password(domain)
-      notify('Password copied')
+    if domain:
+      try:
+        wait_for_card()
+        generate_password(domain)
+        notify('Password copied')
+      except:
+        pass
   time.sleep(0.2)
