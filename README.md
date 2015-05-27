@@ -8,4 +8,4 @@ to find the domain.
 
 Optionally, install the [copy url](https://chrome.google.com/webstore/detail/copy-url/mkhnbhdofgaendegcgbmndipmijhbili?hl=en) extension into Chrome.
 
-pip can install both pyperclip and tldextract. No other dependencies.
+pip can install pyperclip, retrying and tldextract. No other dependencies.
