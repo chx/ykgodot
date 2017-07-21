@@ -9,3 +9,5 @@ to find the domain.
 Optionally, install the [copy url](https://chrome.google.com/webstore/detail/copy-url/mkhnbhdofgaendegcgbmndipmijhbili?hl=en) extension into Chrome.
 
 pip can install pyperclip, retrying and tldextract. No other dependencies.
+
+Note https://github.com/passff/passff is infinitely better.
